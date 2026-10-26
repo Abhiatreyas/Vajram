@@ -1,0 +1,22 @@
+Vajram
+Copyright (c) 2026 Abhijith K J (abhijith.kj@langbrains.in)
+
+This product includes software and data developed by third parties:
+
+1. OLMo-3 Base Model
+   - Developed by the Allen Institute for Artificial Intelligence (AI2).
+   - Licensed under the Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0).
+   - Base model: allenai/Olmo-3-1025-7B.
+
+2. Bhagavad Gita Corpus
+   - Source: github.com/gita/gita
+   - Dedication: Unlicense / Public Domain.
+
+3. Upanishads Texts
+   - Source: Sanskrit Wikisource (sa.wikisource.org)
+   - Texts: Isha, Kena, Katha, Prashna, Mundaka, and Mandukya Upanishads.
+   - Licensed under Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+
+4. Currency & Weather Services (Keyless External APIs used in tools.py)
+   - Exchange rates: European Central Bank reference rates via frankfurter.app.
+   - Weather: wttr.in.

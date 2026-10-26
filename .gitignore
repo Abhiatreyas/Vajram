@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# Environments & virtualenvs
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Weights & Models (NEVER push weights to git)
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.gguf
+model/
+models/
+ckpt/
+checkpoints/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Secrets & local deployment data
+*.key
+*.pem
+credentials/
+deploy/
+local/

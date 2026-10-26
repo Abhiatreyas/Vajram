@@ -1,0 +1,23 @@
+{
+ "_note": "Manual corrections to the Wikisource import, applied by fetch_upanishads.py. Every change is recorded on the verse ('corrections' field). Text replacements restore the standard reading where the transcription has evident typos; checked against the Sankara-bhashya text (verification only, not copied as a source).",
+ "drop": [
+  {"text_id": "katha", "ref": "2.3.19", "why": "closing peace invocation (saha navavatu) numbered as a verse in the source; canon has 18 verses in 2.3"}
+ ],
+ "replace": [
+  {"text_id": "prashna", "ref": "3.4", "insert_before": "3.5", "why": "verse 4 has no end marker in the source and was merged into 3.5; typos सम्रादेवा, एतन् ग्रामानोतान्, अधितिष्टस्व fixed",
+   "sanskrit": "यथा सम्राडेवाधिकृतान् विनियुङ्क्ते ।\nएतान् ग्रामानेतान् ग्रामानधितिष्ठस्वेत्येवमेवैष प्राण इतरान् प्राणान् पृथक् पृथगेव संनिधत्ते ॥ ४ ॥"},
+  {"text_id": "prashna", "ref": "3.5", "why": "split from merged 3.4; typo प्रातिष्टते fixed; broken line joins repaired",
+   "sanskrit": "पायूपस्थेऽपानं चक्षुःश्रोत्रे मुखनासिकाभ्यां प्राणः स्वयं प्रातिष्ठते मध्ये तु समानः ।\nएष ह्येतद्धुतमन्नं समं नयति तस्मादेताः सप्तार्चिषो भवन्ति ॥ ५ ॥"},
+  {"text_id": "prashna", "ref": "3.6", "why": "typos नाडीनं, एकैकस्या fixed; broken line joins repaired",
+   "sanskrit": "हृदि ह्येष आत्मा ।\nअत्रैतदेकशतं नाडीनां तासां शतं शतमेकैकस्यां द्वासप्ततिर्द्वासप्ततिः प्रतिशाखानाडीसहस्राणि भवन्त्यासु व्यानश्चरति ॥ ६ ॥"}
+ ],
+ "status": {
+  "isha": "verse count matches canon (18)",
+  "kena": "verse count matches canon (35)",
+  "katha": "verse count matches canon (119) after correction",
+  "prashna": "verse count matches canon (67) after correction; prashna 3 had transcription typos, other sections need a second-source cross-check",
+  "mundaka": "verse count matches canon (64)",
+  "mandukya": "verse count matches canon (12)",
+  "taittiriya": "excluded for now: prose anuvakas do not parse reliably"
+ }
+}
