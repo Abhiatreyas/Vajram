@@ -17,36 +17,75 @@ This repository contains:
 
 ## Quickstart
 
-Because Vajram's partitioned tokenizer uses multiple Unicode sub-models, standard `llama.cpp`, Ollama, and LM Studio cannot parse its tokens directly. The Vajram server bridges this by running tokenization in Python and sending raw token IDs directly to `llama-server`, providing a standard OpenAI-compatible API.
+Because Vajram's partitioned tokenizer uses multiple Unicode sub-models, standard `llama.cpp`, Ollama, and LM Studio cannot parse its tokens directly. 
 
-### 1. Download Model & Tokenizer
-Request gated access at [Hugging Face: AbhiAtreyas/Vajram-KN1-8B](https://huggingface.co/AbhiAtreyas/Vajram-KN1-8B), then download:
+Vajram runs as a two-process architecture:
+1. **`llama-server` (Backend on Port 8090):** Executes raw GGUF model weights on your GPU.
+2. **`serve/server.py` (Vajram Bridge on Port 8080):** Handles Python tokenization, tools, and exposes a standard OpenAI-compatible API (`/v1/chat/completions`).
 
-```bash
-# Using huggingface-cli
-huggingface-cli download AbhiAtreyas/Vajram-KN1-8B --local-dir ./model
+```
+[Chat Client / SDK / UI] 
+         │ (OpenAI HTTP /v1)
+         ▼
+[Vajram Bridge: port 8080]  ◄── Python Partitioned Tokenizer & Tools
+         │ (Raw Token IDs)
+         ▼
+[llama-server: port 8090]   ◄── GPU Acceleration (CUDA / ROCm / Metal)
 ```
 
-### 2. Start llama-server (Backend)
-Vajram is optimized to run with `llama.cpp` using the Q8_0 GGUF (`./model/gguf/vajram-r6c-dpo-Q8_0.gguf`):
+### 1. Install Dependencies
+Install Python requirements (including `torch` and server dependencies):
+```bash
+pip install -r requirements.txt
+```
+*(Or install directly: `pip install torch fastapi uvicorn tokenizers requests ddgs`)*
+
+### 2. Download Model & Tokenizer
+Request gated access at [Hugging Face: AbhiAtreyas/Vajram-KN1-8B](https://huggingface.co/AbhiAtreyas/Vajram-KN1-8B). Once approved, authenticate and download into `./model`:
 
 ```bash
-# Start llama-server on port 8090
+# Authenticate with your Hugging Face access token
+hf auth login
+
+# Download model weights, GGUF, and tokenizer files
+hf download AbhiAtreyas/Vajram-KN1-8B --local-dir ./model
+```
+*(If using older `huggingface_hub`, use `huggingface-cli download AbhiAtreyas/Vajram-KN1-8B --local-dir ./model`)*
+
+### 3. Start llama-server (Backend)
+Vajram is optimized to run with `llama-server` from [llama.cpp releases](https://github.com/ggml-org/llama.cpp/releases) using the Q8_0 GGUF (`./model/gguf/vajram-r6c-dpo-Q8_0.gguf`):
+
+**NVIDIA / Apple Silicon / Linux (CUDA / Metal):**
+```bash
 llama-server \
   -m ./model/gguf/vajram-r6c-dpo-Q8_0.gguf \
-  -c 16384 \
+  -ngl 33 \
+  -c 4096 \
   -np 1 \
   --port 8090 \
   --host 127.0.0.1
 ```
 
-### 3. Start the Vajram Server
-Install dependencies:
-```bash
-pip install fastapi uvicorn tokenizers requests ddgs
+**AMD Radeon (Windows / ROCm):**
+*(Isolates discrete GPU to prevent integrated CPU graphics conflict during warmup)*
+```powershell
+$env:HIP_VISIBLE_DEVICES = "0"
+.\llama-server.exe `
+  -m ./model/gguf/vajram-r6c-dpo-Q8_0.gguf `
+  -ngl 33 `
+  --device ROCm0 `
+  -fit off `
+  --no-warmup `
+  -c 4096 `
+  -np 1 `
+  --port 8090 `
+  --host 127.0.0.1
 ```
 
-Run the server:
+### 4. Start the Vajram Bridge Server
+In a new terminal window, start the OpenAI-compatible bridge:
+
+**Linux / macOS:**
 ```bash
 export VAJRAM_MODEL_DIR="./model"
 export VAJRAM_LLAMA_URL="http://127.0.0.1:8090"
@@ -55,13 +94,52 @@ export VAJRAM_PORT=8080
 python serve/server.py
 ```
 
+**Windows (PowerShell):**
+```powershell
+$env:VAJRAM_MODEL_DIR = "./model"
+$env:VAJRAM_LLAMA_URL = "http://127.0.0.1:8090"
+$env:VAJRAM_PORT = "8080"
+
+python serve/server.py
+```
+
+### 5. Chat via Built-in Web UI
+Vajram includes a responsive, dark-mode web chat interface directly served by the bridge:
+1. Open your browser and navigate to: **`http://localhost:8080`** (or `http://localhost:8080/v1`)
+2. Alternatively, run the launcher from the repository root:
+   ```bash
+   python vajram_web_ui.py
+   ```
+
+**Features:**
+- Real-time token streaming with Server-Sent Events (SSE).
+- Pan-Indic typography (Noto Sans Kannada + Inter) with crisp conjunct and vattakshara rendering.
+- Interactive temperature and max token budget controls.
+- One-click prompt suggestions in Kannada and English.
+- Completely self-contained — no separate Node/React build or third-party desktop apps needed!
+
 ---
 
 ## Client Usage Examples
 
-The server implements the OpenAI `/v1/chat/completions` specification.
+The server implements the standard OpenAI `/v1/chat/completions` specification, allowing it to work with external tools, SDKs, and third-party visual interfaces.
 
-### Using `curl` (Streaming)
+### 1. Using External Chat Clients (Desktop or Web)
+
+Any client supporting custom OpenAI base URLs connects out of the box:
+
+- **Desktop App (Chatbox, Jan, NextChat):**
+  1. Open your chat client's **Settings → Model Provider** (or **API**).
+  2. Select **OpenAI API** (or Custom Provider).
+  3. Set **API Host / Base URL:** `http://localhost:8080/v1`
+  4. Set **API Key:** `none` (or your configured `VAJRAM_API_KEY`).
+  5. Set **Model Name:** `vajram-8b`.
+- **Web UI (Open WebUI):**
+  Configure the OpenAI connection to `http://localhost:8080/v1` with model `vajram-8b`.
+- **Online Demo:**
+  Try the live hosted preview at [langbrains.ai/chat](https://langbrains.ai/chat).
+
+### 2. Using `curl` (Streaming)
 ```bash
 curl http://localhost:8080/v1/chat/completions \
   -H "Content-Type: application/json" \
@@ -75,7 +153,7 @@ curl http://localhost:8080/v1/chat/completions \
   }'
 ```
 
-### Using OpenAI Python SDK
+### 3. Using OpenAI Python SDK
 ```python
 from openai import OpenAI
 
