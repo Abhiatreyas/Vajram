@@ -1,0 +1,2084 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vajram (ವಜ್ರಂ) 8.4B — LangBrains AI</title>
+  <link rel="icon" type="image/png" href="/logo-symbol.png" />
+
+  <!-- Typography: Inter, Noto Sans Kannada, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- KaTeX for Full LaTeX Math Formatting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+  <!-- Marked.js for GFM Markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.1/marked.min.js"></script>
+
+  <!-- Highlight.js for Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+  <style>
+    /* ==============================================================================
+       LangBrains AI Design System & Curated Color Tokens
+       ============================================================================== */
+    :root {
+      color-scheme: light;
+      --bg: #f5f5f5;
+      --panel: rgba(245, 245, 245, 0.94);
+      --sidebar: rgba(245, 245, 245, 0.96);
+      --surface: #ffffff;
+      --surface-soft: #eceef1;
+      --text: #050505;
+      --text-soft: #5f5f5f;
+      --text-faint: #858585;
+      --border: rgba(0, 0, 0, 0.08);
+      --border-strong: rgba(0, 0, 0, 0.14);
+      --accent: #111111;
+      --accent-strong: #000000;
+      --accent-soft: rgba(245, 158, 11, 0.12);
+      --brand-red: #ef4444;
+      --brand-yellow: #f59e0b;
+      --brand-green: #10b981;
+      --danger: #b64a4a;
+      --code-bg: #1e1e24;
+      --code-header: #282830;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 8px 22px rgba(0, 0, 0, 0.06), inset 0 2px 1px rgba(255, 255, 255, 0.95);
+      --shadow-raised: 0 0.7px 0.7px -0.6px rgba(0, 0, 0, 0.08), 0 3.6px 3.6px -2px rgba(0, 0, 0, 0.07), 0 13.6px 13.6px -3.3px rgba(0, 0, 0, 0.05), 0 30px 30px -4px rgba(0, 0, 0, 0.02), inset 0 3px 1px #fff;
+      --shadow-black: 0 2px 4px rgba(0, 0, 0, 0.3), 0 12px 24px rgba(0, 0, 0, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    }
+
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #151616;
+      --panel: #191a1a;
+      --sidebar: #1d1f1e;
+      --surface: #222423;
+      --surface-soft: #282a29;
+      --text: #f0f1ee;
+      --text-soft: #b0b4b1;
+      --text-faint: #858987;
+      --border: rgba(240, 242, 238, 0.09);
+      --border-strong: rgba(240, 242, 238, 0.16);
+      --accent: #8b91f0;
+      --accent-strong: #9ba0f5;
+      --accent-soft: rgba(139, 145, 240, 0.12);
+      --danger: #e38181;
+      --code-bg: #141617;
+      --code-header: #1c1e1f;
+      --shadow: 0 18px 46px rgba(0, 0, 0, 0.25);
+      --shadow-raised: 0 14px 38px rgba(0, 0, 0, 0.28);
+      --shadow-black: 0 10px 26px rgba(0, 0, 0, 0.32);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', 'Noto Sans Kannada', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    /* Ambient Background with Radial Glows */
+    .app-shell {
+      position: relative;
+      height: 100dvh;
+      display: grid;
+      grid-template-columns: 292px minmax(0, 1fr);
+      gap: 12px;
+      padding: 12px;
+      overflow: hidden;
+      isolation: isolate;
+      background:
+        radial-gradient(circle at 8% 12%, rgba(239, 68, 68, 0.08), transparent 28%),
+        radial-gradient(circle at 92% 10%, rgba(245, 158, 11, 0.1), transparent 30%),
+        radial-gradient(circle at 78% 92%, rgba(16, 185, 129, 0.08), transparent 32%),
+        var(--bg);
+    }
+
+    /* Floating Indic Letters in Background */
+    .chat-language-field {
+      position: fixed;
+      z-index: -1;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .chat-language-field span {
+      position: absolute;
+      color: #64748b;
+      font-family: "Noto Sans Kannada", "Noto Sans Devanagari", "Noto Sans Tamil", "Noto Sans Telugu", sans-serif;
+      font-size: clamp(32px, 4vw, 64px);
+      font-weight: 600;
+      line-height: 1;
+      opacity: 0.12;
+    }
+
+    .chat-language-field span:nth-child(3n + 1) { color: var(--brand-red); }
+    .chat-language-field span:nth-child(3n + 2) { color: #b97800; }
+    .chat-language-field span:nth-child(3n) { color: #087e5b; }
+
+    .chat-language-field span:nth-child(1) { top: 8%; left: 3%; transform: rotate(-9deg); }
+    .chat-language-field span:nth-child(2) { top: 16%; left: 34%; transform: rotate(7deg); }
+    .chat-language-field span:nth-child(3) { top: 7%; right: 7%; transform: rotate(12deg); }
+    .chat-language-field span:nth-child(4) { top: 48%; left: 20%; transform: rotate(6deg); }
+    .chat-language-field span:nth-child(5) { top: 43%; right: 3%; transform: rotate(-8deg); }
+    .chat-language-field span:nth-child(6) { bottom: 8%; left: 5%; transform: rotate(10deg); }
+    .chat-language-field span:nth-child(7) { bottom: 11%; left: 54%; transform: rotate(-5deg); }
+    .chat-language-field span:nth-child(8) { right: 9%; bottom: 6%; transform: rotate(8deg); }
+
+    /* ==============================================================================
+       Sidebar
+       ============================================================================== */
+    .sidebar {
+      position: relative;
+      z-index: 10;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 18px 14px 16px;
+      background: var(--sidebar);
+      border-radius: 24px;
+      box-shadow: var(--shadow-raised);
+      backdrop-filter: blur(22px);
+      border: 1px solid var(--border);
+    }
+
+    .brand-row {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 4px;
+    }
+
+    .brand-link {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      text-decoration: none;
+      color: var(--text);
+      flex: 1;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      flex: 0 0 auto;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-raised);
+    }
+
+    .brand-mark img {
+      width: 80%;
+      height: 80%;
+      object-fit: contain;
+    }
+
+    .brand-titles {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .brand-name {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.2;
+    }
+
+    .brand-ai {
+      margin-left: 2px;
+      color: transparent;
+      background: linear-gradient(135deg, var(--brand-red), var(--brand-yellow) 52%, var(--brand-green));
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+    .brand-model {
+      margin-top: 2px;
+      color: var(--text-faint);
+      font-size: 11px;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .icon-button {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--text-soft);
+      border: none;
+      cursor: pointer;
+      transition: background 150ms ease, color 150ms ease, transform 150ms ease;
+    }
+
+    .icon-button:hover {
+      background: var(--surface-soft);
+      color: var(--text);
+    }
+
+    .icon-button:active {
+      transform: scale(0.95);
+    }
+
+    .new-chat-button {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 18px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: 12px;
+      color: #fff;
+      background: #050505;
+      box-shadow: var(--shadow-black);
+      cursor: pointer;
+      font-size: 13.5px;
+      font-weight: 600;
+      transition: background 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+    }
+
+    :root[data-theme="dark"] .new-chat-button {
+      background: #252827;
+      border: 1px solid var(--border-strong);
+      color: #f0f1ee;
+    }
+
+    .new-chat-button:hover {
+      background: #171717;
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    :root[data-theme="dark"] .new-chat-button:hover {
+      background: #303332;
+    }
+
+    .history-label {
+      margin: 20px 8px 8px;
+      color: var(--text-faint);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .history-list {
+      min-height: 0;
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-right: 4px;
+    }
+
+    .history-item {
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      border-radius: 10px;
+      color: var(--text-soft);
+      padding: 0 8px;
+      position: relative;
+      cursor: pointer;
+      transition: background 150ms ease, color 150ms ease;
+    }
+
+    .history-item:hover,
+    .history-item.active {
+      color: var(--text);
+      background: var(--surface-soft);
+    }
+
+    .history-title {
+      flex: 1;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .history-delete {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: transparent;
+      border: none;
+      color: var(--text-faint);
+      opacity: 0;
+      cursor: pointer;
+      transition: opacity 150ms ease, color 150ms ease, background 150ms ease;
+    }
+
+    .history-item:hover .history-delete {
+      opacity: 1;
+    }
+
+    .history-delete:hover {
+      color: var(--danger);
+      background: rgba(182, 74, 74, 0.12);
+    }
+
+    .sidebar-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    .status-panel {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: var(--surface);
+      font-size: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 550;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+
+    .status-dot.degraded {
+      background: #f59e0b;
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+    }
+
+    .theme-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 4px;
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+
+    /* ==============================================================================
+       Chat Panel
+       ============================================================================== */
+    .chat-panel {
+      position: relative;
+      z-index: 1;
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: 64px minmax(0, 1fr) auto;
+      background: var(--panel);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: var(--shadow-raised);
+      backdrop-filter: blur(22px);
+      border: 1px solid var(--border);
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 24px;
+      border-bottom: 1px solid var(--border);
+      background: color-mix(in srgb, var(--surface) 75%, transparent);
+      backdrop-filter: blur(18px);
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .menu-button {
+      display: none;
+    }
+
+    .model-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      color: var(--text);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+    }
+
+
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Messages Scroll & Column */
+    .messages-scroll {
+      min-height: 0;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;
+    }
+
+    .messages-column {
+      width: min(100%, 860px);
+      min-height: 100%;
+      margin: 0 auto;
+      padding: 36px 28px 24px;
+    }
+
+    /* Welcome / Empty State */
+    .welcome-state {
+      min-height: calc(100dvh - 270px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px 0;
+    }
+
+    .welcome-mark {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 20px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-raised);
+    }
+
+    .welcome-mark img {
+      width: 76%;
+      height: 76%;
+      object-fit: contain;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: #b97800;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .welcome-state h1 {
+      margin: 0;
+      font-size: clamp(34px, 5.5vw, 52px);
+      font-weight: 600;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+    }
+
+    .welcome-state h1 span {
+      color: var(--text-faint);
+      font-weight: 400;
+    }
+
+    .welcome-copy {
+      max-width: 600px;
+      margin: 16px 0 28px;
+      color: var(--text-soft);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .prompt-suggestions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .suggestion-card {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      text-align: left;
+      transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+    }
+
+    .suggestion-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-raised);
+      border-color: var(--border-strong);
+    }
+
+    .suggestion-tag {
+      font-size: 11px;
+      font-weight: 600;
+      color: #b97800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .suggestion-text {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    /* Message Rows */
+    .message-list {
+      display: grid;
+      gap: 18px;
+      padding: 8px 0 48px;
+    }
+
+    .message {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr);
+      gap: 16px;
+      padding: 20px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .message.assistant {
+      background: var(--surface);
+      box-shadow: var(--shadow-raised);
+    }
+
+    .message.user {
+      background: var(--surface-soft);
+      border-color: transparent;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .message-avatar {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: var(--text-soft);
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .message.assistant .message-avatar {
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .message.assistant .message-avatar img {
+      width: 76%;
+      height: 76%;
+      object-fit: contain;
+    }
+
+    .message-body {
+      min-width: 0;
+    }
+
+    .message-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .message-label {
+      color: var(--text-soft);
+      font-size: 12.5px;
+      font-weight: 650;
+      letter-spacing: 0.01em;
+    }
+
+    .copy-message-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-faint);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      padding: 3px 6px;
+      border-radius: 6px;
+      transition: color 150ms ease, background 150ms ease;
+    }
+
+    .copy-message-btn:hover {
+      color: var(--text);
+      background: var(--surface-soft);
+    }
+
+    /* Thinking Indicator */
+    .thinking-banner {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 10px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      color: var(--text-faint);
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+    }
+
+    .thinking-active span {
+      background: linear-gradient(90deg, var(--text-faint) 0%, currentColor 50%, var(--text-faint) 100%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: thinkingShimmer 2s linear infinite;
+    }
+
+    .thinking-active svg {
+      color: var(--brand-yellow);
+      animation: pulse-dot 1.4s infinite ease-in-out;
+    }
+
+    @keyframes thinkingShimmer {
+      from { background-position: 100% 0; }
+      to { background-position: -100% 0; }
+    }
+
+    /* Tool Call Banner */
+    .tool-call-banner {
+      display: inline-flex;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .tool-call-searching {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #d97706;
+      animation: toolPulse 1.8s infinite ease-in-out;
+    }
+
+    :root[data-theme="dark"] .tool-call-searching {
+      color: #facc15;
+    }
+
+    .tool-call-done {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: #059669;
+    }
+
+    :root[data-theme="dark"] .tool-call-done {
+      color: #34d399;
+    }
+
+    @keyframes toolPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.15); }
+      50% { box-shadow: 0 0 10px 2px rgba(245, 158, 11, 0.25); }
+    }
+
+    /* Message Content Formatting: Markdown & LaTeX */
+    .message-content {
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.76;
+      overflow-wrap: anywhere;
+    }
+
+    .message-content p {
+      margin: 0 0 0.8em;
+    }
+
+    .message-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .message-content h1,
+    .message-content h2,
+    .message-content h3,
+    .message-content h4 {
+      margin: 1.2em 0 0.5em;
+      font-weight: 650;
+      line-height: 1.3;
+      letter-spacing: -0.02em;
+    }
+
+    .message-content h1 { font-size: 1.5rem; }
+    .message-content h2 { font-size: 1.3rem; }
+    .message-content h3 { font-size: 1.15rem; }
+
+    .message-content ul,
+    .message-content ol {
+      margin: 0.5em 0 0.8em 1.5em;
+      padding: 0;
+    }
+
+    .message-content li {
+      margin-bottom: 0.35em;
+    }
+
+    .message-content blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 14px;
+      margin: 0.8em 0;
+      color: var(--text-soft);
+      font-style: italic;
+    }
+
+    /* Tables */
+    .message-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.2em 0;
+      font-size: 13.5px;
+      display: block;
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid var(--border-strong);
+    }
+
+    .message-content th,
+    .message-content td {
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      text-align: left;
+      vertical-align: top;
+      word-break: normal;
+    }
+
+    .message-content th {
+      background: var(--surface-soft);
+      font-weight: 650;
+    }
+
+    .message-content tr:nth-child(even) td {
+      background: color-mix(in srgb, var(--surface-soft) 40%, transparent);
+    }
+
+    /* LaTeX Math Blocks */
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 10px 14px;
+      margin: 1em 0;
+      background: var(--surface-soft);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .katex-inline {
+      padding: 1px 4px;
+      font-size: 1.05em;
+    }
+
+    /* Code Blocks */
+    .message-content code:not(pre code) {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--surface-soft);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-size: 0.88em;
+      border: 1px solid var(--border);
+    }
+
+    .code-block-wrapper {
+      position: relative;
+      margin: 1.1em 0;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 14px;
+      background: var(--code-header);
+      color: #94a3b8;
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .code-copy-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: #cbd5e1;
+      padding: 4px 9px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 11px;
+      transition: background 150ms ease, color 150ms ease;
+    }
+
+    .code-copy-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+    }
+
+    .message-content pre {
+      margin: 0;
+      background: transparent;
+      padding: 0;
+      border: none;
+    }
+
+    .message-content pre code {
+      display: block;
+      padding: 14px 16px;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* Cursor */
+    .typing-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 15px;
+      margin-left: 3px;
+      vertical-align: middle;
+      background: var(--accent);
+      animation: blink 0.9s infinite;
+      border-radius: 2px;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    /* Telemetry & Metrics Grid */
+    .telemetry-grid {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .telemetry-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      color: var(--text-soft);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ==============================================================================
+       Composer Area
+       ============================================================================== */
+    .composer-region {
+      position: relative;
+      z-index: 4;
+      width: min(100%, 860px);
+      margin: 0 auto;
+      padding: 0 28px 16px;
+      background: linear-gradient(to bottom, transparent, var(--panel) 24%);
+    }
+
+    .error-banner {
+      margin-bottom: 10px;
+      padding: 10px 14px;
+      border: 1px solid rgba(182, 74, 74, 0.25);
+      border-radius: 12px;
+      color: var(--danger);
+      background: rgba(182, 74, 74, 0.08);
+      font-size: 12.5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .composer-card {
+      padding: 12px 14px 10px;
+      border-radius: 22px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-raised);
+      transition: border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .composer-card:focus-within {
+      border-color: rgba(245, 158, 11, 0.4);
+      box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.16), 0 16px 40px rgba(0, 0, 0, 0.12);
+    }
+
+    .composer-textarea {
+      width: 100%;
+      min-height: 24px;
+      max-height: 176px;
+      display: block;
+      resize: none;
+      overflow-y: auto;
+      padding: 4px 6px 10px;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .composer-textarea::placeholder {
+      color: var(--text-faint);
+    }
+
+    .composer-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 4px;
+      border-top: 1px solid var(--border);
+    }
+
+    .composer-tools {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tool-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      color: var(--text-faint);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background 150ms ease, color 150ms ease;
+    }
+
+    .tool-chip:hover {
+      background: var(--surface-soft);
+      color: var(--text-soft);
+      border-color: var(--border);
+    }
+
+    .send-button {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: #fff;
+      background: #050505;
+      border: none;
+      box-shadow: var(--shadow-black);
+      cursor: pointer;
+      transition: transform 150ms ease, background 150ms ease, opacity 150ms ease;
+    }
+
+    :root[data-theme="dark"] .send-button {
+      background: #f0f1ee;
+      color: #050505;
+    }
+
+    .send-button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+    }
+
+    .send-button:disabled {
+      cursor: not-allowed;
+      opacity: 0.35;
+    }
+
+    .stop-button {
+      background: #ef4444 !important;
+      color: #fff !important;
+    }
+
+    .composer-caption {
+      min-height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding-top: 8px;
+      color: var(--text-faint);
+      font-size: 11px;
+    }
+
+    /* Scrim for Mobile Sidebar */
+    .sidebar-scrim {
+      display: none;
+    }
+
+    /* Responsive Queries */
+    @media (max-width: 860px) {
+      .app-shell {
+        display: block;
+        padding: 0;
+      }
+
+      .sidebar {
+        position: fixed;
+        z-index: 50;
+        inset: 0 auto 0 0;
+        width: min(84vw, 310px);
+        border-radius: 0 24px 24px 0;
+        transform: translateX(-105%);
+        box-shadow: 24px 0 60px rgba(0, 0, 0, 0.25);
+        transition: transform 240ms cubic-bezier(0.2, 0.9, 0.3, 1);
+      }
+
+      .sidebar.sidebar-open {
+        transform: translateX(0);
+      }
+
+      .menu-button {
+        display: grid;
+      }
+
+      .sidebar-scrim {
+        position: fixed;
+        z-index: 40;
+        inset: 0;
+        display: block;
+        background: rgba(10, 12, 11, 0.45);
+        backdrop-filter: blur(3px);
+      }
+
+      .chat-panel {
+        height: 100dvh;
+        border-radius: 0;
+        border: none;
+      }
+
+      .topbar {
+        padding: 0 16px;
+      }
+
+      .messages-column {
+        padding: 24px 16px 16px;
+      }
+
+      .composer-region {
+        padding: 0 16px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Floating Background Indic Characters -->
+    <div class="chat-language-field" aria-hidden="true">
+      <span>ಕ</span>
+      <span>अ</span>
+      <span>அ</span>
+      <span>ತ</span>
+      <span>ಮ</span>
+      <span>অ</span>
+      <span>ક</span>
+      <span>ਕ</span>
+    </div>
+
+    <!-- Scrim for mobile menu -->
+    <div class="sidebar-scrim" id="sidebarScrim" style="display: none;"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand-row">
+        <a href="/" class="brand-link" title="LangBrains AI">
+          <div class="brand-mark">
+            <img src="/logo-symbol.png" alt="LangBrains Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23f59e0b\' stroke-width=\'2\'><polygon points=\'6 2 18 2 22 8 12 22 2 8 6 2\'/></svg>';" />
+          </div>
+          <div class="brand-titles">
+            <span class="brand-name">LangBrains <span class="brand-ai">AI</span></span>
+            <span class="brand-model">Vajram Indic LLM</span>
+          </div>
+        </a>
+        <button class="icon-button" id="sidebarCloseBtn" aria-label="Close sidebar" style="display: none;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <button class="new-chat-button" id="newChatBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        New conversation
+      </button>
+
+      <div class="history-label">Recent Conversations</div>
+      <nav class="history-list" id="historyList" aria-label="Conversation history"></nav>
+
+      <div class="sidebar-footer">
+        <div class="status-panel">
+          <div class="status-badge">
+            <span class="status-dot" id="serverStatusDot"></span>
+            <span id="serverModelText">vajram-8b</span>
+          </div>
+          <span style="font-size: 11px; color: var(--text-faint);" id="serverBackendText">Ready</span>
+        </div>
+
+        <div class="theme-toggle-row">
+          <span>Appearance</span>
+          <button class="icon-button" id="themeToggleBtn" title="Toggle Light/Dark Theme">
+            <svg id="themeIconSun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            <svg id="themeIconMoon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Chat Workspace -->
+    <main class="chat-panel">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-button menu-button" id="menuToggleBtn" aria-label="Open conversation menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div class="model-chip">
+            <span class="status-dot"></span>
+            <span>Vajram 8.4B</span>
+          </div>
+
+        </div>
+
+        <div class="topbar-actions">
+          <button class="icon-button" id="clearConversationBtn" title="Clear current messages">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Messages Region -->
+      <div class="messages-scroll" id="messagesScroll">
+        <div class="messages-column">
+          <!-- Welcome Screen (Visible when chat is empty) -->
+          <section class="welcome-state" id="welcomeState">
+            <div class="welcome-mark">
+              <img src="/logo-symbol.png" alt="Vajram Mark" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23f59e0b\' stroke-width=\'2\'><polygon points=\'6 2 18 2 22 8 12 22 2 8 6 2\'/></svg>';" />
+            </div>
+            <p class="eyebrow">LangBrains AI • Vajram 8.4B</p>
+            <h1>ನಮಸ್ಕಾರ. <span>Hello.</span></h1>
+            <p class="welcome-copy">
+              State-of-the-art Indic Language Model with high-fidelity reasoning in Kannada and Indian languages. Supports full LaTeX equations, Markdown, and code execution.
+            </p>
+
+            <div class="prompt-suggestions">
+              <button class="suggestion-card" onclick="useStarterPrompt('ವಿಜ್ಞಾನ ಮತ್ತು ತಂತ್ರಜ್ಞಾನದಲ್ಲಿ ಆರ್ಟಿಫಿಶಿಯಲ್ ಇಂಟೆಲಿಜೆನ್ಸ್ ಪಾತ್ರದ ಕುರಿತು ವಿವರವಾಗಿ ತಿಳಿಸಿ.')">
+                <span class="suggestion-tag">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                  ಕನ್ನಡ ವಿವರಣೆ
+                </span>
+                <span class="suggestion-text">ವಿಜ್ಞಾನ ಮತ್ತು ತಂತ್ರಜ್ಞಾನದಲ್ಲಿ AI ಪಾತ್ರದ ಸಮಗ್ರ ವಿವರಣೆ</span>
+              </button>
+
+              <button class="suggestion-card" onclick="useStarterPrompt('Derive and explain Einstein\'s field equations in general relativity with full LaTeX mathematical formulation.')">
+                <span class="suggestion-tag">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path></svg>
+                  LaTeX Mathematics
+                </span>
+                <span class="suggestion-text">Derive Einstein field equations $G_{\mu\nu} + \Lambda g_{\mu\nu} = \kappa T_{\mu\nu}$</span>
+              </button>
+
+              <button class="suggestion-card" onclick="useStarterPrompt('ಕನ್ನಡ ನಾಡು ನುಡಿ ಮತ್ತು ಇತಿಹಾಸದ ಕುರಿತು ಒಂದು ಭಾವಪೂರ್ಣ ಕವಿತೆ ಬರೆಯಿರಿ.')">
+                <span class="suggestion-tag">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                  ಕಾವ್ಯ ರಚನೆ
+                </span>
+                <span class="suggestion-text">ಕನ್ನಡ ನಾಡು-ನುಡಿಯ ಸಂಭ್ರಮವನ್ನು ಸಾರುವ ಸುಂದರ ಕವಿತೆ</span>
+              </button>
+
+              <button class="suggestion-card" onclick="useStarterPrompt('Implement an optimized quicksort algorithm in Python with time complexity analysis and GFM table comparison.')">
+                <span class="suggestion-tag">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                  Code & Algorithms
+                </span>
+                <span class="suggestion-text">Optimized Quicksort in Python with complexity table</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- Chat Message Thread -->
+          <div class="message-list" id="messageList" style="display: none;"></div>
+        </div>
+      </div>
+
+      <!-- Composer Region -->
+      <div class="composer-region">
+        <div class="error-banner" id="errorBanner" style="display: none;">
+          <span id="errorBannerText">An error occurred</span>
+          <button class="icon-button" onclick="document.getElementById('errorBanner').style.display='none'" style="width:24px;height:24px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+
+        <form class="composer-card" id="composerForm">
+          <textarea
+            class="composer-textarea"
+            id="promptInput"
+            placeholder="ವಜ್ರಂಗೆ ಕೇಳಿ · Ask Vajram..."
+            aria-label="Message Vajram"
+            rows="1"
+          ></textarea>
+          <div class="composer-toolbar">
+            <div class="composer-tools">
+              <span class="tool-chip" title="Vajram supports Indic reasoning and tools">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                Indic 8.4B
+              </span>
+            </div>
+
+            <button class="send-button" id="sendBtn" type="submit" aria-label="Send message" disabled>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+          </div>
+        </form>
+
+        <div class="composer-caption">
+          <span>Enter to send, Shift + Enter for new line • Vajram Indic AI</span>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Application Logic -->
+  <script>
+    // State Management
+    const STORAGE_KEY = 'vajram-preview-conversations-v1';
+    let conversations = [];
+    let activeId = '';
+    let isStreaming = false;
+    let currentAbortController = null;
+
+    // Elements
+    const sidebar = document.getElementById('sidebar');
+    const sidebarScrim = document.getElementById('sidebarScrim');
+    const menuToggleBtn = document.getElementById('menuToggleBtn');
+    const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+    const historyList = document.getElementById('historyList');
+    const newChatBtn = document.getElementById('newChatBtn');
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const themeIconSun = document.getElementById('themeIconSun');
+    const themeIconMoon = document.getElementById('themeIconMoon');
+
+    const clearConversationBtn = document.getElementById('clearConversationBtn');
+    const messagesScroll = document.getElementById('messagesScroll');
+    const welcomeState = document.getElementById('welcomeState');
+    const messageList = document.getElementById('messageList');
+    const promptInput = document.getElementById('promptInput');
+    const composerForm = document.getElementById('composerForm');
+    const sendBtn = document.getElementById('sendBtn');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorBannerText = document.getElementById('errorBannerText');
+    const serverStatusDot = document.getElementById('serverStatusDot');
+    const serverModelText = document.getElementById('serverModelText');
+    const serverBackendText = document.getElementById('serverBackendText');
+
+    function createId() {
+      return (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : 'c_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+    }
+
+    function createConversation() {
+      return {
+        id: createId(),
+        title: 'New conversation',
+        messages: [],
+        updatedAt: Date.now()
+      };
+    }
+
+    // Initialize Data & Theme
+    function init() {
+      // 1. Theme
+      const savedTheme = localStorage.getItem('vajram-theme') || 'dark';
+      applyTheme(savedTheme);
+
+
+
+      // 3. Conversations
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          conversations = JSON.parse(stored);
+        }
+      } catch (e) {
+        conversations = [];
+      }
+
+      if (!conversations || conversations.length === 0) {
+        const firstConvo = createConversation();
+        conversations = [firstConvo];
+      }
+      activeId = conversations[0].id;
+
+      renderHistory();
+      renderActiveConversation();
+      checkServerHealth();
+    }
+
+    function saveConversations() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(conversations));
+      } catch (e) {}
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('vajram-theme', theme);
+      if (theme === 'dark') {
+        themeIconSun.style.display = 'block';
+        themeIconMoon.style.display = 'none';
+      } else {
+        themeIconSun.style.display = 'none';
+        themeIconMoon.style.display = 'block';
+      }
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    });
+
+
+
+    // Mobile Sidebar
+    menuToggleBtn.addEventListener('click', () => {
+      sidebar.classList.add('sidebar-open');
+      sidebarScrim.style.display = 'block';
+      sidebarCloseBtn.style.display = 'grid';
+    });
+
+    function closeSidebar() {
+      sidebar.classList.remove('sidebar-open');
+      sidebarScrim.style.display = 'none';
+    }
+    sidebarScrim.addEventListener('click', closeSidebar);
+    sidebarCloseBtn.addEventListener('click', closeSidebar);
+
+    // Health Check
+    async function checkServerHealth() {
+      try {
+        const res = await fetch('/health');
+        if (res.ok) {
+          const data = await res.json();
+          serverModelText.textContent = data.model || 'vajram-8b';
+          serverBackendText.textContent = data.status === 'ok' ? 'Ready' : (data.backend_status || 'Degraded');
+          serverStatusDot.className = data.status === 'ok' ? 'status-dot' : 'status-dot degraded';
+        }
+      } catch (e) {
+        serverStatusDot.className = 'status-dot degraded';
+        serverBackendText.textContent = 'Offline';
+      }
+    }
+
+    // Conversations & History
+    function getActiveConversation() {
+      return conversations.find(c => c.id === activeId) || conversations[0];
+    }
+
+    function renderHistory() {
+      historyList.innerHTML = '';
+      conversations.forEach(c => {
+        const item = document.createElement('div');
+        item.className = 'history-item' + (c.id === activeId ? ' active' : '');
+        item.onclick = (e) => {
+          if (e.target.closest('.history-delete')) return;
+          if (isStreaming && currentAbortController) currentAbortController.abort();
+          activeId = c.id;
+          renderHistory();
+          renderActiveConversation();
+          closeSidebar();
+        };
+
+        const titleSpan = document.createElement('span');
+        titleSpan.className = 'history-title';
+        titleSpan.innerHTML = `
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(c.title || 'New conversation')}</span>
+        `;
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'history-delete';
+        delBtn.title = 'Delete conversation';
+        delBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>';
+        delBtn.onclick = (e) => {
+          e.stopPropagation();
+          deleteConversation(c.id);
+        };
+
+        item.appendChild(titleSpan);
+        item.appendChild(delBtn);
+        historyList.appendChild(item);
+      });
+    }
+
+    function deleteConversation(id) {
+      if (isStreaming && id === activeId) currentAbortController?.abort();
+      conversations = conversations.filter(c => c.id !== id);
+      if (conversations.length === 0) {
+        conversations = [createConversation()];
+      }
+      if (id === activeId) {
+        activeId = conversations[0].id;
+      }
+      saveConversations();
+      renderHistory();
+      renderActiveConversation();
+    }
+
+    newChatBtn.addEventListener('click', () => {
+      if (isStreaming && currentAbortController) currentAbortController.abort();
+      const newConvo = createConversation();
+      conversations.unshift(newConvo);
+      activeId = newConvo.id;
+      saveConversations();
+      renderHistory();
+      renderActiveConversation();
+      closeSidebar();
+      promptInput.focus();
+    });
+
+    clearConversationBtn.addEventListener('click', () => {
+      const convo = getActiveConversation();
+      if (!convo || convo.messages.length === 0) return;
+      if (confirm('Clear all messages in this conversation?')) {
+        if (isStreaming && currentAbortController) currentAbortController.abort();
+        convo.messages = [];
+        convo.title = 'New conversation';
+        saveConversations();
+        renderHistory();
+        renderActiveConversation();
+      }
+    });
+
+    // ==============================================================================
+    // LaTeX & Markdown Engine
+    // ==============================================================================
+
+    /**
+     * Normalizes LaTeX mathematical delimiters like LangBrains AI.
+     * Rewrites \[ ... \] to $$ ... $$ and \( ... \) to $ ... $
+     * while completely preserving code spans and fenced blocks.
+     */
+    function normalizeMath(markdown) {
+      if (!markdown) return '';
+      return markdown
+        .split(/(```[\s\S]*?```|`[^`\n]*`)/g)
+        .map((part, index) =>
+          index % 2 === 1
+            ? part
+            : part
+                .replace(/\\\[([\s\S]+?)\\\]/g, (_, body) => `\n$$\n${body.trim()}\n$$\n`)
+                .replace(/\\\(([\s\S]+?)\\\)/g, (_, body) => `$${body.trim()}$`)
+        )
+        .join('');
+    }
+
+    /**
+     * Complete parser that renders Markdown and LaTeX together without conflict.
+     * Prevents markdown parsers from corrupting math symbols (underscores, asterisks).
+     */
+    function renderMarkdownAndMath(text) {
+      if (!text) return '';
+
+      // 1. Normalize math delimiters
+      let processed = normalizeMath(text);
+
+      // 2. Protect Code Blocks
+      const codePlaceholders = [];
+      processed = processed.replace(/(```[\s\S]*?```|`[^`\n]+`)/g, (match) => {
+        const id = `@@VAJRAM_CODE_${codePlaceholders.length}@@`;
+        codePlaceholders.push(match);
+        return id;
+      });
+
+      // 3. Extract & Render Display Math: $$ ... $$
+      const mathPlaceholders = [];
+      processed = processed.replace(/\$\$([\s\S]+?)\$\$/g, (match, formula) => {
+        const id = `@@VAJRAM_MATH_${mathPlaceholders.length}@@`;
+        let rendered = match;
+        if (window.katex) {
+          try {
+            rendered = `<div class="katex-display">${katex.renderToString(formula.trim(), { displayMode: true, throwOnError: false })}</div>`;
+          } catch (e) {
+            rendered = `<div class="katex-display katex-error">${escapeHtml(formula)}</div>`;
+          }
+        }
+        mathPlaceholders.push(rendered);
+        return id;
+      });
+
+      // 4. Extract & Render Inline Math: $ ... $
+      processed = processed.replace(/(?<!\\)\$([^\$\n\s][^\$\n]*?[^\$\n\s]|[^\$\n\s])\$/g, (match, formula) => {
+        // Exclude currency numbers like "$100" or "$24.99"
+        if (/^\d+(?:\.\d+)?$/.test(formula.trim())) return match;
+        const id = `@@VAJRAM_MATH_${mathPlaceholders.length}@@`;
+        let rendered = match;
+        if (window.katex) {
+          try {
+            rendered = `<span class="katex-inline">${katex.renderToString(formula.trim(), { displayMode: false, throwOnError: false })}</span>`;
+          } catch (e) {
+            rendered = `<span class="katex-inline katex-error">${escapeHtml(formula)}</span>`;
+          }
+        }
+        mathPlaceholders.push(rendered);
+        return id;
+      });
+
+      // 5. Restore Code Blocks before parsing markdown
+      processed = processed.replace(/@@VAJRAM_CODE_(\d+)@@/g, (_, idx) => codePlaceholders[Number(idx)]);
+
+      // 6. Parse Markdown via Marked
+      let html = '';
+      if (window.marked) {
+        html = marked.parse(processed, { gfm: true, breaks: true });
+      } else {
+        html = escapeHtml(processed);
+      }
+
+      // 7. Unwrap any display math incorrectly wrapped in <p> tags by Markdown
+      html = html.replace(/<p>\s*(@@VAJRAM_MATH_\d+@@)\s*<\/p>/g, '$1');
+
+      // 8. Restore Rendered Math
+      html = html.replace(/@@VAJRAM_MATH_(\d+)@@/g, (_, idx) => mathPlaceholders[Number(idx)]);
+
+      return html;
+    }
+
+    /**
+     * Enhance code blocks with custom dark containers, language badges,
+     * syntax highlighting, and "Copy Code" button.
+     */
+    function enhanceCodeBlocks(container) {
+      container.querySelectorAll('pre').forEach((pre) => {
+        if (pre.closest('.code-block-wrapper')) return;
+
+        const code = pre.querySelector('code');
+        if (!code) return;
+
+        // Syntax highlighting
+        if (window.hljs && !code.classList.contains('hljs')) {
+          hljs.highlightElement(code);
+        }
+
+        // Determine language
+        let lang = 'code';
+        code.classList.forEach(cls => {
+          if (cls.startsWith('language-')) lang = cls.replace('language-', '');
+        });
+
+        // Create sleek wrapper matching LangBrains AI aesthetic
+        const wrapper = document.createElement('div');
+        wrapper.className = 'code-block-wrapper';
+
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        header.innerHTML = `
+          <span>${lang}</span>
+          <button class="code-copy-btn" type="button">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            Copy
+          </button>
+        `;
+
+        const copyBtn = header.querySelector('.code-copy-btn');
+        copyBtn.onclick = () => {
+          navigator.clipboard.writeText(code.innerText);
+          copyBtn.innerHTML = `
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Copied!
+          `;
+          setTimeout(() => {
+            copyBtn.innerHTML = `
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              Copy
+            `;
+          }, 2000);
+        };
+
+        pre.parentNode.insertBefore(wrapper, pre);
+        wrapper.appendChild(header);
+        wrapper.appendChild(pre);
+      });
+    }
+
+    function escapeHtml(text) {
+      const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+      return String(text).replace(/[&<>"']/g, m => map[m]);
+    }
+
+    // ==============================================================================
+    // Message Rendering
+    // ==============================================================================
+    function renderActiveConversation() {
+      const convo = getActiveConversation();
+      if (!convo || convo.messages.length === 0) {
+        welcomeState.style.display = 'flex';
+        messageList.style.display = 'none';
+        messageList.innerHTML = '';
+        return;
+      }
+
+      welcomeState.style.display = 'none';
+      messageList.style.display = 'grid';
+      messageList.innerHTML = '';
+
+      convo.messages.forEach(msg => {
+        appendMessageElement(msg);
+      });
+
+      scrollMessagesToBottom();
+    }
+
+    function appendMessageElement(msg) {
+      const article = document.createElement('article');
+      article.className = `message ${msg.role}`;
+      article.id = `msg-${msg.id}`;
+
+      const avatarHtml = msg.role === 'assistant'
+        ? `<div class="message-avatar">
+             <img src="/logo-symbol.png" alt="Vajram" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23f59e0b\' stroke-width=\'2\'><polygon points=\'6 2 18 2 22 8 12 22 2 8 6 2\'/></svg>';" />
+           </div>`
+        : `<div class="message-avatar">
+             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+           </div>`;
+
+      const headerLabel = msg.role === 'assistant' ? 'Vajram' : 'You';
+
+      let bannersHtml = '';
+      if (msg.role === 'assistant') {
+        if (msg.toolCall) {
+          bannersHtml += renderToolCallBanner(msg.toolCall);
+        }
+        if (msg.thinking) {
+          bannersHtml += renderThinkingBanner(msg.thinking);
+        }
+      }
+
+      let telemetryHtml = '';
+      if (msg.role === 'assistant' && (msg.tokens || msg.latencyMs)) {
+        telemetryHtml = `
+          <div class="telemetry-grid">
+            ${msg.tokens ? `<span class="telemetry-pill">${msg.tokens} tokens</span>` : ''}
+            ${msg.latencyMs ? `<span class="telemetry-pill">${(msg.latencyMs / 1000).toFixed(1)}s</span>` : ''}
+          </div>
+        `;
+      }
+
+      article.innerHTML = `
+        ${avatarHtml}
+        <div class="message-body">
+          <div class="message-header">
+            <span class="message-label">${headerLabel}</span>
+            ${msg.content ? `
+              <button class="copy-message-btn" onclick="copyMessageText('${msg.id}')" title="Copy text">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                Copy
+              </button>
+            ` : ''}
+          </div>
+          <div class="banners-container">${bannersHtml}</div>
+          <div class="message-content">${renderMarkdownAndMath(msg.content)}</div>
+          ${telemetryHtml}
+        </div>
+      `;
+
+      enhanceCodeBlocks(article);
+      messageList.appendChild(article);
+      return article;
+    }
+
+    function renderThinkingBanner(thinking) {
+      const active = thinking.status === 'thinking';
+      const label = active ? `Thinking…` : `Thought for ${Math.max(1, Math.round((thinking.ms || 0) / 1000))}s`;
+      return `
+        <div class="thinking-banner ${active ? 'thinking-active' : ''}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          <span>${label}</span>
+        </div>
+      `;
+    }
+
+    function renderToolCallBanner(toolCall) {
+      const isRunning = toolCall.status === 'running' || toolCall.status === 'searching';
+      const q = toolCall.query ? ` "${escapeHtml(toolCall.query)}"` : '';
+      const tool = (toolCall.tool || 'tool').toLowerCase().trim();
+
+      let icon = isRunning ? '⚙️' : '✓';
+      let actionText = '';
+
+      if (tool === 'python') {
+        icon = isRunning ? '🐍' : '✓';
+        actionText = isRunning ? `Executing Python code${q}...` : `Executed Python:${q}`;
+      } else if (tool === 'calculator') {
+        icon = isRunning ? '🔢' : '✓';
+        actionText = isRunning ? `Calculating${q}...` : `Calculated:${q}`;
+      } else if (tool === 'weather') {
+        icon = isRunning ? '🌤️' : '✓';
+        actionText = isRunning ? `Checking weather for${q}...` : `Weather in${q}`;
+      } else if (tool === 'currency_convert') {
+        icon = isRunning ? '💱' : '✓';
+        actionText = isRunning ? `Converting currency${q}...` : `Currency conversion:${q}`;
+      } else if (tool === 'scripture_lookup') {
+        icon = isRunning ? '📜' : '✓';
+        actionText = isRunning ? `Looking up scripture verse...` : `Scripture verse:${q}`;
+      } else if (tool === 'fetch_page') {
+        icon = isRunning ? '🌐' : '✓';
+        actionText = isRunning ? `Reading web page${q}...` : `Read web page:${q}`;
+      } else if (tool === 'web_search') {
+        icon = isRunning ? '🔍' : '✓';
+        actionText = isRunning ? `Searching the web for${q}...` : `Searched the web for${q}`;
+      } else {
+        icon = isRunning ? '⚡' : '✓';
+        const toolLabel = tool.replace(/_/g, ' ');
+        actionText = isRunning ? `Running ${escapeHtml(toolLabel)}${q}...` : `Used ${escapeHtml(toolLabel)}:${q}`;
+      }
+
+      return `
+        <div class="tool-call-banner ${isRunning ? 'tool-call-searching' : 'tool-call-done'}">
+          <span style="display:flex;align-items:center;gap:6px;">
+            <span>${icon}</span>
+            <span>${actionText}</span>
+          </span>
+        </div>
+      `;
+    }
+
+    function copyMessageText(msgId) {
+      const convo = getActiveConversation();
+      const msg = convo?.messages.find(m => m.id === msgId);
+      if (msg && msg.content) {
+        navigator.clipboard.writeText(msg.content);
+        const btn = document.querySelector(`#msg-${msgId} .copy-message-btn`);
+        if (btn) {
+          const original = btn.innerHTML;
+          btn.innerHTML = '✓ Copied';
+          setTimeout(() => { btn.innerHTML = original; }, 2000);
+        }
+      }
+    }
+
+    function scrollMessagesToBottom(instant = false) {
+      messagesScroll.scrollTo({
+        top: messagesScroll.scrollHeight,
+        behavior: instant ? 'auto' : 'smooth'
+      });
+    }
+
+    // Auto-grow Textarea
+    promptInput.addEventListener('input', () => {
+      promptInput.style.height = 'auto';
+      promptInput.style.height = Math.min(promptInput.scrollHeight, 176) + 'px';
+      sendBtn.disabled = !promptInput.value.trim() && !isStreaming;
+    });
+
+    promptInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        if (!isStreaming && promptInput.value.trim()) {
+          composerForm.dispatchEvent(new Event('submit'));
+        }
+      }
+    });
+
+    function useStarterPrompt(prompt) {
+      promptInput.value = prompt;
+      promptInput.style.height = 'auto';
+      promptInput.style.height = Math.min(promptInput.scrollHeight, 176) + 'px';
+      sendBtn.disabled = false;
+      composerForm.dispatchEvent(new Event('submit'));
+    }
+
+    // ==============================================================================
+    // Chat Stream Execution
+    // ==============================================================================
+    composerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (isStreaming) {
+        // User clicked Stop button
+        if (currentAbortController) currentAbortController.abort();
+        return;
+      }
+
+      const text = promptInput.value.trim();
+      if (!text) return;
+
+      errorBanner.style.display = 'none';
+      const convo = getActiveConversation();
+
+      // Derive title if first message
+      if (convo.messages.length === 0) {
+        convo.title = text.length > 36 ? text.slice(0, 36) + '…' : text;
+        welcomeState.style.display = 'none';
+        messageList.style.display = 'grid';
+      }
+
+      // Add user message
+      const userMsg = {
+        id: createId(),
+        role: 'user',
+        content: text
+      };
+      convo.messages.push(userMsg);
+      appendMessageElement(userMsg);
+
+      promptInput.value = '';
+      promptInput.style.height = 'auto';
+      sendBtn.disabled = true;
+
+      // Add placeholder assistant message
+      const assistantId = createId();
+      const assistantMsg = {
+        id: assistantId,
+        role: 'assistant',
+        content: '',
+        thinking: null,
+        toolCall: null,
+        tokens: 0,
+        latencyMs: 0
+      };
+      convo.messages.push(assistantMsg);
+
+      const assistantArticle = appendMessageElement(assistantMsg);
+      const contentEl = assistantArticle.querySelector('.message-content');
+      const bannersEl = assistantArticle.querySelector('.banners-container');
+      contentEl.innerHTML = '<span class="typing-cursor"></span>';
+
+      scrollMessagesToBottom();
+      saveConversations();
+      renderHistory();
+
+      // UI Streaming State
+      isStreaming = true;
+      sendBtn.disabled = false;
+      sendBtn.className = 'send-button stop-button';
+      sendBtn.title = 'Stop generation';
+      sendBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg>';
+
+      currentAbortController = new AbortController();
+      const startedAt = performance.now();
+
+      // Format payload for /v1/chat/completions
+      const requestMessages = convo.messages
+        .filter(m => m.id !== assistantId)
+        .map(m => ({ role: m.role, content: m.content }));
+
+
+
+      let accumulatedContent = '';
+      let thinkingState = null;
+      let toolCallState = null;
+
+      try {
+        const response = await fetch('/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'vajram-8b',
+            messages: requestMessages,
+            stream: true,
+            temperature: 0.3,
+            max_tokens: 2048
+          }),
+          signal: currentAbortController.signal
+        });
+
+        if (!response.ok) {
+          const errText = await response.text();
+          throw new Error(`Server returned HTTP ${response.status}: ${errText}`);
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let buffer = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          for (const line of lines) {
+            const clean = line.trim();
+            if (!clean.startsWith('data:')) continue;
+            const dataStr = clean.slice(5).trim();
+            if (dataStr === '[DONE]') break;
+
+            try {
+              const parsed = JSON.parse(dataStr);
+
+              // 1. Delta Content
+              const deltaContent = parsed.choices?.[0]?.delta?.content;
+              if (deltaContent) {
+                accumulatedContent += deltaContent;
+
+                // Handle inline thinking tags if any (<think>...</think>)
+                let displayContent = accumulatedContent;
+                if (displayContent.includes('<think>')) {
+                  const parts = displayContent.split('</think>');
+                  if (parts.length > 1) {
+                    displayContent = parts[1].trim();
+                  } else {
+                    displayContent = '';
+                  }
+                }
+
+                contentEl.innerHTML = renderMarkdownAndMath(displayContent) + '<span class="typing-cursor"></span>';
+                enhanceCodeBlocks(contentEl);
+                scrollMessagesToBottom(true);
+              }
+
+              // 2. Thinking Event
+              const thinkingEvent = parsed.choices?.[0]?.delta?.thinking || parsed.thinking;
+              if (thinkingEvent) {
+                thinkingState = thinkingEvent;
+                assistantMsg.thinking = thinkingEvent;
+                updateBanners();
+              }
+
+              // 3. Tool Call Event
+              const toolCallEvent = parsed.choices?.[0]?.delta?.tool_call || parsed.tool_call;
+              if (toolCallEvent) {
+                toolCallState = toolCallEvent;
+                assistantMsg.toolCall = toolCallEvent;
+                updateBanners();
+              }
+
+              // 4. Usage / Telemetry
+              if (parsed.usage) {
+                assistantMsg.tokens = parsed.usage.completion_tokens || parsed.usage.total_tokens || 0;
+              }
+            } catch (jsonErr) {}
+          }
+        }
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          if (!accumulatedContent) accumulatedContent = 'Response stopped.';
+        } else {
+          errorBanner.style.display = 'flex';
+          errorBannerText.textContent = err.message || 'Error communicating with Vajram server.';
+          if (!accumulatedContent) accumulatedContent = `*(Error: ${err.message})*`;
+        }
+      } finally {
+        isStreaming = false;
+        currentAbortController = null;
+
+        // Reset send button
+        sendBtn.className = 'send-button';
+        sendBtn.title = 'Send message';
+        sendBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>';
+        sendBtn.disabled = !promptInput.value.trim();
+
+        // Finalize assistant message
+        const elapsed = Math.round(performance.now() - startedAt);
+        assistantMsg.latencyMs = elapsed;
+
+        // Clean out <think> tags if any
+        if (accumulatedContent.includes('<think>')) {
+          const parts = accumulatedContent.split('</think>');
+          accumulatedContent = parts.length > 1 ? parts[1].trim() : parts[0].replace(/<think>[\s\S]*/, '').trim();
+        }
+
+        assistantMsg.content = accumulatedContent;
+        contentEl.innerHTML = renderMarkdownAndMath(accumulatedContent);
+        enhanceCodeBlocks(contentEl);
+
+        // Update final telemetry
+        if (!assistantMsg.tokens) {
+          // Estimate output tokens if not directly returned in usage chunk
+          assistantMsg.tokens = Math.max(1, Math.round(accumulatedContent.length / 3.8));
+        }
+
+        saveConversations();
+        renderActiveConversation();
+      }
+
+      function updateBanners() {
+        let html = '';
+        if (toolCallState) html += renderToolCallBanner(toolCallState);
+        if (thinkingState) html += renderThinkingBanner(thinkingState);
+        bannersEl.innerHTML = html;
+      }
+    });
+
+    // Start
+    init();
+  </script>
+</body>
+</html>

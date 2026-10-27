@@ -26,6 +26,12 @@ Environment variables:
 """
 import json, urllib.request, os, re, sys, threading, time, uuid
 
+# Configure stdout and stderr for UTF-8 so Indic scripts print reliably on Windows
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 # transformers' threaded weight loader intermittently access-violates on ROCm/Windows:
 # load synchronously
 os.environ.setdefault("HF_DEACTIVATE_ASYNC_LOAD", "1")
@@ -43,7 +49,7 @@ except ImportError:
 
 from fastapi import FastAPI, Header, HTTPException, Request
 from starlette.concurrency import run_in_threadpool
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse, HTMLResponse, RedirectResponse, FileResponse
 
 BACKEND = os.environ.get("VAJRAM_BACKEND", "llama")
 LLAMA_URL = os.environ.get("VAJRAM_LLAMA_URL", "http://127.0.0.1:8090")
@@ -707,6 +713,45 @@ def repair_numbers(args, convo):
 def check_auth(authorization):
     if API_KEY and authorization != f"Bearer {API_KEY}":
         raise HTTPException(401, "invalid API key")
+
+
+UI_HTML_PATH = os.path.join(os.path.dirname(__file__), "ui.html")
+
+def get_ui_html() -> str:
+    if os.path.exists(UI_HTML_PATH):
+        with open(UI_HTML_PATH, "r", encoding="utf-8") as f:
+            return f.read()
+    return "<html><body style='font-family:sans-serif;background:#0f1420;color:#f1f5f9;padding:40px;'><h1>Vajram API</h1><p>Vajram 8.4B Inference Server is running.</p></body></html>"
+
+
+@app.get("/", response_class=HTMLResponse)
+@app.get("/ui", response_class=HTMLResponse)
+def index():
+    return HTMLResponse(get_ui_html())
+
+
+@app.get("/logo-symbol.png")
+@app.get("/static/logo-symbol.png")
+def logo_symbol():
+    path = os.path.join(os.path.dirname(__file__), "logo-symbol.png")
+    if os.path.exists(path):
+        return FileResponse(path, media_type="image/png")
+    raise HTTPException(404, "Logo not found")
+
+
+@app.get("/logo.svg")
+@app.get("/static/logo.svg")
+def logo_svg():
+    path = os.path.join(os.path.dirname(__file__), "logo.svg")
+    if os.path.exists(path):
+        return FileResponse(path, media_type="image/svg+xml")
+    raise HTTPException(404, "Logo not found")
+
+
+@app.get("/v1", response_class=HTMLResponse)
+@app.get("/v1/", response_class=HTMLResponse)
+def v1_index():
+    return RedirectResponse(url="/")
 
 
 @app.get("/health")
